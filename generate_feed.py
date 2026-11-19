@@ -6,7 +6,7 @@ import xml.etree.ElementTree as ET
 FEED_URL = "https://zadavaka.net/marketplace-integration/google-feed/0433240f7f1dfb0e6d80da0eb96a7dde?langId=3"
 STORE_CODE = "14608689277009241074"
 OUTPUT_FILE = "local_inventory.csv"
-ID_PREFIXES = ["ua", "ru", "pf"]
+ID_PREFIXES = ["ua"]
 
 
 def get_tag_text(elem, tag_name):
