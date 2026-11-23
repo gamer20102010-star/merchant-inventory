@@ -1,4 +1,5 @@
 import csv
+from datetime import datetime, timezone
 import urllib.request
 import xml.etree.ElementTree as ET
 
@@ -7,6 +8,7 @@ FEED_URL = "https://zadavaka.net/marketplace-integration/google-feed/0433240f7f1
 STORE_CODE = "14608689277009241074"
 OUTPUT_FILE = "local_inventory.csv"
 ID_PREFIXES = ["ua"]
+PICKUP_SLA = "next_day"  # забрати сьогодні-завтра / наступного дня
 
 
 def get_tag_text(elem, tag_name):
@@ -26,7 +28,17 @@ def process_feed():
     request = urllib.request.Request(FEED_URL, headers=headers)
     req = urllib.request.urlopen(request)
 
-    csv_columns = ["id", "store_code", "quantity", "price", "availability"]
+    fetch_date = datetime.now(timezone.utc).strftime("%Y-%m-%d")
+
+    csv_columns = [
+        "id",
+        "store_code",
+        "quantity",
+        "price",
+        "availability",
+        "availability_date",
+        "pickup_sla",
+    ]
 
     item_count = 0
     total_parsed = 0
@@ -59,12 +71,16 @@ def process_feed():
                                 "quantity": 1,
                                 "price": price,
                                 "availability": "in_stock",
+                                "availability_date": fetch_date,
+                                "pickup_sla": PICKUP_SLA,
                             })
                             item_count += 1
 
                 elem.clear()
 
-    print(f"Готово! Переглянуто товарів: {total_parsed}, записано рядків у CSV: {item_count}")
+    print(
+        f"Готово! Переглянуто товарів: {total_parsed}, записано рядків у CSV: {item_count}"
+    )
 
 
 if __name__ == "__main__":
